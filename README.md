@@ -29,5 +29,10 @@ This is a python script which lets you download YouTube Playlists or seperate Yo
 
 Suggestions are most welcome. You can contact me at kushagrasahu.ed@gmail.com </br>
 
+#Screenshot
+
+![valarscreenshotgh](https://cloud.githubusercontent.com/assets/16977717/16316529/a08a71d4-39a4-11e6-8ae8-1ab63f8dd7ad.png)
+
+
 <b>Will be creating a web app based on this script having some more functionalities ;) </b>
 

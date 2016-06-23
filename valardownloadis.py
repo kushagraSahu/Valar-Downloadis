@@ -66,6 +66,8 @@ def download(watch_url, views):
 			to_download = list_links[choice-1]
 			to_download_url = to_download['href']
 			webbrowser.open(to_download_url, new = 0, autoraise = True)
+			print("Downloading ...")
+
 		else:
 			flag_stay_video = True
 			print("Please be more specific in entering the name of the video")
@@ -77,6 +79,7 @@ def download(watch_url, views):
 		to_download_url = link['href']
 		print(download + ", " + str(video_format) + ", Playlist Views: " + views)
 		webbrowser.open(to_download_url, new = 0, autoraise = True)
+		print("Downloading ...")
 
 def download_video():
 	global activate_video
