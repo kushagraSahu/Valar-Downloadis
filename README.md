@@ -39,6 +39,9 @@ Voila!
 
 ![valar2](https://cloud.githubusercontent.com/assets/16977717/16316678/4d9e04b2-39a5-11e6-9d37-46f63cbdc2a2.png)
 
+Also added a new feature: To choose specific videos of the playlist by their index no.s!
+
+![valar3](https://cloud.githubusercontent.com/assets/16977717/16336899/ccc3b794-3a2e-11e6-8337-54d3226132e8.png)
 
 <b>Will be creating a web app based on this script having some more functionalities ;) </b>
 
