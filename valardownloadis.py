@@ -218,7 +218,7 @@ def main():
 	while True:
 		global flag_stay_video
 		flag_stay_video=False
-		print("Press 'P' to download a playlist.\nPress 'V' to download a single video.")
+		print("VALAR DOWNLOADIS!\nPress 'P' to download a playlist.\nPress 'V' to download a single video.")
 		
 		while True:
 			choice = input()
@@ -238,7 +238,7 @@ def main():
 			if inp == 'y' or inp == 'Y':
 				pass
 			else:
-				print("Thank You!")
+				print("Valar Dohaeris!")
 				break
 
 #Calling main function.
