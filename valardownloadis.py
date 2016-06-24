@@ -31,7 +31,9 @@ def download(watch_url, views):
 	sf_result = soup.find('div', {'class':'wrapper'}).find('div', {'class':'downloader-2'}).find('div',{'id':'sf_result'})
 	
 	hit_count = 1
+	#Put a loop just to handle the bug, since YouTube returns media result as None most of the time.
 	while True:
+		#To limit the session visit of download_url
 		if hit_count > hit_threshold:
 			abort_override = True
 			break
@@ -50,7 +52,7 @@ def download(watch_url, views):
 	if not abort_override:
 		dropdown_box_list = info_box.find('div', {'class': 'link-box'}).find('div', {'class': 'drop-down-box'}).find('div', {'class': 'list'}).find('div', {'class': 'links'})
 		download_link_groups = dropdown_box_list.findAll('div', {'class': 'link-group'})
-		
+		#Incase of downloading a single video.
 		if activate_video:
 			i=0
 			list_links = []
@@ -61,7 +63,9 @@ def download(watch_url, views):
 					download = str(link['download'])
 					extension = re.split(r'\.(?!\d)', download)[-1]
 					class_link = link['class']
+					#Removing no-audio downloads.
 					if class_link[0] != "no-audio":
+						#Onlt allowing mp4 downloads as of now.
 						if extension == "mp4":
 							i+=1
 							video_format = link['title']
@@ -77,12 +81,13 @@ def download(watch_url, views):
 				to_download = list_links[choice-1]
 				to_download_url = to_download['href']
 				webbrowser.open(to_download_url, new = 0, autoraise = True)
+				#Downloads in default Browser since I have not used websrowser.register().
 				print("Downloading ...")
 
 			else:
 				flag_stay_video = True
 				print("Please be more specific in entering the name of the video")
-
+		#Incase of downloading a playlist. Will be downloading 720p videos mostly. Still have to give choice in download_playlist()
 		elif activate_playlist:
 			link = download_link_groups[0].findAll('a')[0]
 			download = link['download']
@@ -116,10 +121,12 @@ def download_video():
 	list_results = soup.find('div', {'id': 'results'}).find('ol',{'class':'section-list'}).find('ol',{'class':'item-section'}).findAll('li')
 	
 	for result in list_results:
+		#To exclude Youtube Ads.
 		if result.find('div', {'class': 'pyv-afc-ads-container'}):
 			continue
 		else:
 			hit_count = 1
+			#To limit the loop to a threshold value. Used loop to handle most occuring bug.
 			while True:
 				if hit_count > hit_threshold:
 					abort_override = True
@@ -163,6 +170,7 @@ def download_playlist():
 	inp = input()
 	
 	if inp == 'y' or inp == 'Y':
+		#Still to ask for choice between different video quality(720 or 360p, etc)
 		playlist_content = inner_content.find('ul', {'id': 'browse-items-primary'}).find('div', {'id': 'pl-video-list'}).find('tbody', {'id':'pl-load-more-destination'})
 		print("To download all the videos, Press 'A'.\nTo download only the specific videos of the playlist, Press 'S'")
 		list_videos = playlist_content.findAll('tr')
@@ -178,12 +186,14 @@ def download_playlist():
 					print(str(index) + '. ' + video_title)
 					index += 1
 				print("Enter the index no. of videos you want to download specifically from the playlist(preferred in increasing order). For eg - '1 4 5 7' or '2 6 3 11'")
+				#Taking input integer no.s in a list.
 				specific_videos = input()
 				index_videos = list(map(int, specific_videos.split()))
 				break
 
 		index = 1
 		for tr in list_videos:
+			#Checking whether index is in the list provided by the user.
 			if index in index_videos:
 				video = tr.find('td', {'class': 'pl-video-title'}).find('a')
 				watch_url = video['href']
@@ -232,7 +242,7 @@ def main():
 				print("Press 'P' to download a playlist.\nPress 'V' to download a single video.")
 		
 		if not flag_stay_video:
-			time.sleep(5)
+			time.sleep(3)
 			print("Do you wish to download more?\nEnter 'Y' for more and any other key to quit.")
 			inp = input()
 			if inp == 'y' or inp == 'Y':
@@ -241,6 +251,6 @@ def main():
 				print("Valar Dohaeris!")
 				break
 
-#Calling main function.
+#Calling main function if called directly and not from some other module.
 if __name__ == "__main__":
 	main()
