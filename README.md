@@ -41,7 +41,7 @@ Also added a new feature: To choose specific videos of the playlist by their ind
 
 Voila!
 
-![valar1](https://cloud.githubusercontent.com/assets/16977717/16337927/ab0c03ce-3a36-11e6-95be-44d4d79897b8.png)
+![v1](https://cloud.githubusercontent.com/assets/16977717/16337972/160b5b48-3a37-11e6-9edc-15e5edf3c72f.png)
 
 
 <b>Will be creating a web app based on this script having some more functionalities ;) </b>
