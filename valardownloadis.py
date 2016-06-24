@@ -12,10 +12,14 @@ global flag_stay_video
 global activate_playlist
 global activate_video
 
+global hit_threshold
+hit_threshold = 14
+
 activate_video = False
 activate_playlist = False
 
 def download(watch_url, views):
+	global hit_threshold
 	global flag_stay_video
 	abort = False
 	abort_override = False
@@ -28,7 +32,7 @@ def download(watch_url, views):
 	
 	hit_count = 1
 	while True:
-		if hit_count > 14:
+		if hit_count > hit_threshold:
 			abort_override = True
 			break
 		media_result = sf_result.find('div', {'class':'media-result'})
@@ -91,6 +95,7 @@ def download(watch_url, views):
 		print("Oops. Trouble downloading this video. Try again!")
 
 def download_video():
+	global hit_threshold
 	global activate_video
 	global activate_playlist
 	abort_override = False
@@ -116,7 +121,7 @@ def download_video():
 		else:
 			hit_count = 1
 			while True:
-				if hit_count > 14:
+				if hit_count > hit_threshold:
 					abort_override = True
 					break
 				watch_result = result.find('div', {'class': "yt-lockup-content"})
