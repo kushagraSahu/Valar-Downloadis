@@ -18,6 +18,7 @@ activate_playlist = False
 def download(watch_url, views):
 	global flag_stay_video
 	abort = False
+	abort_override = False
 	download_url = base_ss_url + watch_url
 	session2 = dryscrape.Session()
 	session2.visit(download_url)
@@ -25,7 +26,11 @@ def download(watch_url, views):
 	soup = BeautifulSoup(response,"lxml")
 	sf_result = soup.find('div', {'class':'wrapper'}).find('div', {'class':'downloader-2'}).find('div',{'id':'sf_result'})
 	
+	hit_count = 1
 	while True:
+		if hit_count > 14:
+			abort_override = True
+			break
 		media_result = sf_result.find('div', {'class':'media-result'})
 		if media_result != None:
 			info_box = media_result.find('div', {'class': 'info-box'})
@@ -36,54 +41,59 @@ def download(watch_url, views):
 			response=session2.body()
 			soup = BeautifulSoup(response,"lxml")
 			sf_result = soup.find('div', {'class':'wrapper'}).find('div', {'class':'downloader-2'}).find('div',{'id':'sf_result'})
+		hit_count += 1
 	
-	dropdown_box_list = info_box.find('div', {'class': 'link-box'}).find('div', {'class': 'drop-down-box'}).find('div', {'class': 'list'}).find('div', {'class': 'links'})
-	download_link_groups = dropdown_box_list.findAll('div', {'class': 'link-group'})
-	
-	if activate_video:
-		i=0
-		list_links = []
+	if not abort_override:
+		dropdown_box_list = info_box.find('div', {'class': 'link-box'}).find('div', {'class': 'drop-down-box'}).find('div', {'class': 'list'}).find('div', {'class': 'links'})
+		download_link_groups = dropdown_box_list.findAll('div', {'class': 'link-group'})
 		
-		for group in download_link_groups:
-			download_links = group.findAll('a')
-			for link in download_links:
-				download = str(link['download'])
-				extension = re.split(r'\.(?!\d)', download)[-1]
-				class_link = link['class']
-				if class_link[0] != "no-audio":
-					if extension == "mp4":
-						i+=1
-						video_format = link['title']
-						list_links.append(link)
-						print(str(i) + ". " + download + ", " + str(video_format) + ", Youtube Views: " + views)
-		
-		print("Select your choice for the download. Enter any other number to abort this download!")
-		choice = input()
-		choice = int(choice)
-		if choice > len(list_links) or choice <= 0:
-			abort = True
-		if not abort:
-			to_download = list_links[choice-1]
-			to_download_url = to_download['href']
+		if activate_video:
+			i=0
+			list_links = []
+			
+			for group in download_link_groups:
+				download_links = group.findAll('a')
+				for link in download_links:
+					download = str(link['download'])
+					extension = re.split(r'\.(?!\d)', download)[-1]
+					class_link = link['class']
+					if class_link[0] != "no-audio":
+						if extension == "mp4":
+							i+=1
+							video_format = link['title']
+							list_links.append(link)
+							print(str(i) + ". " + download + ", " + str(video_format) + ", Youtube Views: " + views)
+			
+			print("Select your choice for the download. Enter any other number to abort this download!")
+			choice = input()
+			choice = int(choice)
+			if choice > len(list_links) or choice <= 0:
+				abort = True
+			if not abort:
+				to_download = list_links[choice-1]
+				to_download_url = to_download['href']
+				webbrowser.open(to_download_url, new = 0, autoraise = True)
+				print("Downloading ...")
+
+			else:
+				flag_stay_video = True
+				print("Please be more specific in entering the name of the video")
+
+		elif activate_playlist:
+			link = download_link_groups[0].findAll('a')[0]
+			download = link['download']
+			video_format = link['title']
+			to_download_url = link['href']
+			print(download + ", " + str(video_format) + ", Playlist Views: " + views)
 			webbrowser.open(to_download_url, new = 0, autoraise = True)
 			print("Downloading ...")
-
-		else:
-			flag_stay_video = True
-			print("Please be more specific in entering the name of the video")
-
-	elif activate_playlist:
-		link = download_link_groups[0].findAll('a')[0]
-		download = link['download']
-		video_format = link['title']
-		to_download_url = link['href']
-		print(download + ", " + str(video_format) + ", Playlist Views: " + views)
-		webbrowser.open(to_download_url, new = 0, autoraise = True)
-		print("Downloading ...")
+	else:
+		print("Oops. Trouble downloading this video. Try again!")
 
 def download_video():
 	global activate_video
 	global activate_playlist
+	abort_override = False
 	print("Enter name of the video.")
 	search_input = input()
 	search_split = search_input.split()
@@ -104,18 +114,25 @@ def download_video():
 		if result.find('div', {'class': 'pyv-afc-ads-container'}):
 			continue
 		else:
+			hit_count = 1
 			while True:
+				if hit_count > 14:
+					abort_override = True
+					break
 				watch_result = result.find('div', {'class': "yt-lockup-content"})
 				if watch_result != None:
 					break
+				hit_count += 1
 			break
-
-	video_views = watch_result.find('ul', {'class': 'yt-lockup-meta-info'}).findAll('li')[1].text
-	video_views = video_views.split()[0]
-	watch_url = watch_result.find('h3', {'class': 'yt-lockup-title'}).find('a')['href']
-	activate_playlist = False
-	activate_video = True
-	download(watch_url, video_views)
+	if not abort_override:
+		video_views = watch_result.find('ul', {'class': 'yt-lockup-meta-info'}).findAll('li')[1].text
+		video_views = video_views.split()[0]
+		watch_url = watch_result.find('h3', {'class': 'yt-lockup-title'}).find('a')['href']
+		activate_playlist = False
+		activate_video = True
+		download(watch_url, video_views)
+	else:
+		print("Oops. Trouble downloading this video. Try again!")
 
 def download_playlist():
 	global activate_video
