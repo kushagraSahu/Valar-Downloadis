@@ -201,4 +201,5 @@ def main():
 				break
 
 #Calling main function.
-main()
+if __name__ == "__main__":
+	main()
