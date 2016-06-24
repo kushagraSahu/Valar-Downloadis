@@ -142,12 +142,31 @@ def download_playlist():
 	
 	if inp == 'y' or inp == 'Y':
 		playlist_content = inner_content.find('ul', {'id': 'browse-items-primary'}).find('div', {'id': 'pl-video-list'}).find('tbody', {'id':'pl-load-more-destination'})
+		print("To download all the videos, Press 'A'.\nTo download only the specific videos of the playlist, Press 'S'")
 		list_videos = playlist_content.findAll('tr')
-		
+		while True:
+			choice = input()
+			if choice == 'A' or choice == 'a':
+				break
+			elif choice == 'S' or choice == 's':
+				index = 1
+				for tr in list_videos:
+
+					video_title = tr.find('td', {'class': 'pl-video-title'}).find('a').text
+					print(str(index) + '. ' + video_title)
+					index += 1
+				print("Enter the index no. of videos you want to download specifically from the playlist(preferred in increasing order). For eg - '1 4 5 7' or '2 6 3 11'")
+				specific_videos = input()
+				index_videos = list(map(int, specific_videos.split()))
+				break
+
+		index = 1
 		for tr in list_videos:
-			video = tr.find('td', {'class': 'pl-video-title'}).find('a')
-			watch_url = video['href']
-			list_watch_urls.append(watch_url)
+			if index in index_videos:
+				video = tr.find('td', {'class': 'pl-video-title'}).find('a')
+				watch_url = video['href']
+				list_watch_urls.append(watch_url)
+			index += 1
 		# To download only a subset of all the videos at a time, then to resume the download on user's input
 		# print("I recommend you download only a set of videos at one time. Depending on your speed, please enter the number of videos you want to download at a time")
 		# set_count = input()
