@@ -149,6 +149,7 @@ def download_video():
 def download_playlist():
 	global activate_video
 	global activate_playlist
+	all_videos = False
 	list_watch_urls = []
 	print("Please enter the exact url of the youtube playlist. For eg- 'https://www.youtube.com/playlist?list=PL6gx4Cwl9DGBYxWxJtLi8c6PGjNKGYGZZ'")
 	search_url = input()
@@ -177,6 +178,7 @@ def download_playlist():
 		while True:
 			choice = input()
 			if choice == 'A' or choice == 'a':
+				all_videos = True
 				break
 			elif choice == 'S' or choice == 's':
 				index = 1
@@ -191,14 +193,20 @@ def download_playlist():
 				index_videos = list(map(int, specific_videos.split()))
 				break
 
-		index = 1
-		for tr in list_videos:
-			#Checking whether index is in the list provided by the user.
-			if index in index_videos:
+		if all_videos:
+			for tr in list_videos:
 				video = tr.find('td', {'class': 'pl-video-title'}).find('a')
 				watch_url = video['href']
 				list_watch_urls.append(watch_url)
-			index += 1
+		else:
+			index = 1
+			for tr in list_videos:
+				#Checking whether index is in the list provided by the user.
+				if index in index_videos:
+					video = tr.find('td', {'class': 'pl-video-title'}).find('a')
+					watch_url = video['href']
+					list_watch_urls.append(watch_url)
+				index += 1
 		# To download only a subset of all the videos at a time, then to resume the download on user's input
 		# print("I recommend you download only a set of videos at one time. Depending on your speed, please enter the number of videos you want to download at a time")
 		# set_count = input()
