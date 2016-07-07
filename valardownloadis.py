@@ -13,7 +13,7 @@ global activate_playlist
 global activate_video
 
 global hit_threshold
-hit_threshold = 14
+hit_threshold = 1
 
 activate_video = False
 activate_playlist = False
@@ -26,6 +26,7 @@ def download(watch_url, views):
 	download_url = base_ss_url + watch_url
 	session2 = dryscrape.Session()
 	session2.visit(download_url)
+	time.sleep(1.5)
 	response=session2.body()
 	soup = BeautifulSoup(response,"lxml")
 	sf_result = soup.find('div', {'class':'wrapper'}).find('div', {'class':'downloader-2'}).find('div',{'id':'sf_result'})
